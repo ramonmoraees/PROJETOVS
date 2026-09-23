@@ -27,20 +27,21 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: meu-app/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: meu-app
         run: npm ci
 
       - name: Build app
-        working-directory: meu-app
         run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: meu-app/dist
+          path: dist
 
   deploy:
     environment:
