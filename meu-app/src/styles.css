@@ -6,12 +6,12 @@
   --primary-strong: #111827;
   --accent: #2563eb;
   --accent-soft: #dbeafe;
-  --accent-2: #10b981;
+  --accent-2: #2563eb;
   --text: #18212f;
   --muted: #5f6c7b;
   --line: #dfe7f3;
   --shadow: rgba(15, 23, 42, 0.12);
-  --success: #16a34a;
+  --success: #2563eb;
 }
 
 * {
@@ -232,7 +232,7 @@ img {
 }
 
 .rating-badge {
-  background: #ecfdf5;
+  background: #eff6ff;
   color: var(--success);
 }
 
@@ -532,8 +532,8 @@ img {
 }
 
 .match-badge.high {
-  background: #ecfdf5;
-  color: #15803d;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .match-badge.medium {

@@ -1,10 +1,4 @@
-const navItems = [
-  { id: 'home', label: 'Home' },
-  { id: 'catalog', label: 'Comprar' },
-  { id: 'matches', label: 'Matches' },
-  { id: 'favorites', label: 'Favoritos' },
-  { id: 'profile', label: 'Perfil' },
-];
+import { clientNavItems as navItems } from './navigationItems';
 
 function BottomNavigation({ currentPage, onNavigate }) {
   return (

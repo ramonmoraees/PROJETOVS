@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import Login from './pages/Login';
+import SellerDashboard from './pages/SellerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import RolePlaceholderPage from './pages/RolePlaceholderPage';
 import Header from './components/Header';
 import BottomNavigation from './components/BottomNavigation';
 import SidebarNavigation from './components/SidebarNavigation';
@@ -14,6 +18,18 @@ const pageTitles = {
   matches: 'Matches',
   favorites: 'Favoritos',
   profile: 'Perfil',
+  dashboard: 'Dashboard',
+  'my-vehicles': 'Meus veículos',
+  'add-vehicle': 'Adicionar veículo',
+  leads: 'Interessados',
+  proposals: 'Propostas',
+  users: 'Usuários',
+  vehicles: 'Veículos',
+  stores: 'Lojas',
+  ads: 'Anúncios',
+  reports: 'Relatórios',
+  settings: 'Configurações',
+  help: 'Ajuda',
 };
 
 function App() {
@@ -21,6 +37,7 @@ function App() {
   const [favorites, setFavorites] = useState([2]);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [session, setSession] = useState(null);
 
   const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId) || null;
 
@@ -39,8 +56,36 @@ function App() {
     setCurrentPage('detail');
   };
 
+  const handleLogin = (user) => {
+    setSession(user);
+    setCurrentPage(user.role === 'client' ? 'home' : 'dashboard');
+  };
+
+  const handleLogout = () => {
+    setSession(null);
+    setCurrentPage('home');
+  };
+
+  if (!session) return <Login onLogin={handleLogin} />;
+
+  const role = session.role;
+
   const renderPage = () => {
+    if (role === 'seller') {
+      if (currentPage === 'dashboard') return <SellerDashboard onNavigate={setCurrentPage} />;
+      return <RolePlaceholderPage title={pageTitles[currentPage]} description="Organize sua operação de vendas e acompanhe cada oportunidade em um só lugar." />;
+    }
+
+    if (role === 'admin') {
+      if (currentPage === 'dashboard') return <AdminDashboard />;
+      return <RolePlaceholderPage title={pageTitles[currentPage]} description="Os controles desta área estarão disponíveis em uma próxima etapa da plataforma." />;
+    }
+
     switch (currentPage) {
+      case 'settings':
+        return <section className="page-card placeholder-page"><span className="section-kicker">Preferências</span><h1>Configurações</h1><p>As preferências da sua conta estarão disponíveis em uma próxima etapa.</p></section>;
+      case 'help':
+        return <section className="page-card placeholder-page"><span className="section-kicker">Central AutoMatch</span><h1>Ajuda</h1><p>Encontre respostas e suporte para sua jornada de compra.</p></section>;
       case 'catalog':
         return (
           <BuyPage
@@ -112,18 +157,18 @@ function App() {
         );
       case 'home':
       default:
-        return <HomePage onNavigate={setCurrentPage} vehicles={vehicles} />;
+        return <HomePage onNavigate={setCurrentPage} vehicles={vehicles} favorites={favorites} onSelectVehicle={handleOpenVehicle} onToggleFavorite={toggleFavorite} />;
     }
   };
 
   return (
-    <div className="app-shell">
-      <SidebarNavigation currentPage={currentPage} onNavigate={setCurrentPage} />
+    <div className={`app-shell app-shell--${role}`}>
+      <SidebarNavigation role={role} currentPage={currentPage} onNavigate={setCurrentPage} onLogout={handleLogout} />
 
       <div className="content-shell">
-        <Header title={pageTitles[currentPage]} />
+        <Header title={pageTitles[currentPage]} role={role} userName={session.email === 'demo@automatch.ai' ? 'Ramon' : session.email?.split('@')[0] || 'Ramon'} onLogout={handleLogout} />
         <main className="main-content">{renderPage()}</main>
-        <BottomNavigation currentPage={currentPage} onNavigate={setCurrentPage} />
+        {role === 'client' && <BottomNavigation currentPage={currentPage} onNavigate={setCurrentPage} />}
       </div>
     </div>
   );
